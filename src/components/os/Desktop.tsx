@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOSStore } from '@/store/useOSStore';
-import { Taskbar } from './Taskbar';
-import { Window } from './Window';
+import { AppID } from '@/types/os';
+import { cn } from '@/lib/utils';
 import { 
   FileText, 
   Palette, 
@@ -27,6 +27,9 @@ import Music from '../apps/Music';
 import AppStore from '../apps/AppStore';
 import Terminal from '../apps/Terminal';
 import Settings from '../apps/Settings';
+
+import { Taskbar } from './Taskbar';
+import { Window } from './Window';
 
 const APP_COMPONENTS: Record<string, React.ReactNode> = {
   notepad: <Notepad />,
@@ -89,16 +92,34 @@ export const Desktop = () => {
   );
 };
 
-const DesktopIcon = ({ name, icon, onDoubleClick }: { id: string, name: string, icon: React.ReactNode, onDoubleClick: () => void }) => (
-  <button 
-    onDoubleClick={onDoubleClick}
-    className="flex flex-col items-center gap-1 p-2 rounded-md hover:bg-white/10 active:bg-white/20 transition-all w-24 group"
-  >
-    <div className="group-active:scale-95 transition-transform duration-75">
-      {icon}
-    </div>
-    <span className="text-xs text-white text-shadow font-medium truncate w-full text-center">
-      {name}
-    </span>
-  </button>
-);
+const DesktopIcon = ({ name, icon, onDoubleClick }: { id: string, name: string, icon: React.ReactNode, onDoubleClick: () => void }) => {
+  const lastClickTime = React.useRef(0);
+
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // For touch devices or fast successive clicks (mobile/desktop hybrid)
+    const now = Date.now();
+    const isTouch = e.type.startsWith('touch') || (typeof window !== 'undefined' && 'ontouchstart' in window);
+    
+    if (isTouch || now - lastClickTime.current < 300) {
+      onDoubleClick();
+      lastClickTime.current = 0; // Reset
+    } else {
+      lastClickTime.current = now;
+    }
+  };
+
+  return (
+    <button 
+      onClick={handleClick}
+      onContextMenu={(e) => e.preventDefault()}
+      className="flex flex-col items-center gap-1 p-2 rounded-md hover:bg-white/10 active:bg-white/20 transition-all w-24 group outline-none"
+    >
+      <div className="group-active:scale-95 transition-transform duration-75 pointer-events-none">
+        {icon}
+      </div>
+      <span className="text-xs text-white text-shadow font-medium truncate w-full text-center pointer-events-none">
+        {name}
+      </span>
+    </button>
+  );
+};

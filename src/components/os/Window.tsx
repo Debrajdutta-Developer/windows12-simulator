@@ -23,6 +23,19 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
   const isMaximized = windowState.isMaximized;
   const isFocused = windowState.focused;
 
+  const handlePointerDown = (e: React.PointerEvent) => {
+    focusApp(id);
+    try {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } catch (err) {}
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    try {
+      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch (err) {}
+  };
+
   return (
     <motion.div
       initial={{ scale: 0.9, opacity: 0 }}
@@ -30,13 +43,16 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
       exit={{ scale: 0.9, opacity: 0 }}
       drag={!isMaximized}
       dragMomentum={false}
-      onMouseDown={() => focusApp(id)}
+      onDragStart={() => focusApp(id)}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
       style={{ 
         zIndex: windowState.zIndex,
         position: 'absolute',
+        touchAction: 'none'
       }}
       className={cn(
-        "flex flex-col overflow-hidden bg-white/80 backdrop-blur-3xl rounded-xl shadow-2xl border border-white/40",
+        "flex flex-col overflow-hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl rounded-xl shadow-2xl border border-white/40",
         isMaximized ? "inset-0 rounded-none" : "w-[800px] h-[500px] left-[10%] top-[10%]",
         !isFocused && "brightness-95 shadow-lg"
       )}

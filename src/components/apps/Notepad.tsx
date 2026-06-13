@@ -6,13 +6,16 @@ import { Save, FolderOpen, FileText } from 'lucide-react';
 const Notepad: React.FC = () => {
   const [content, setContent] = useState('');
   const [filename, setFilename] = useState('untitled.txt');
-  const [files, setFiles] = useState<Record<string, string>>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('win12_fs');
-      return saved ? JSON.parse(saved) : {};
-    }
-    return {};
-  });
+  const [files, setFiles] = useState<Record<string, string>>({});
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem('win12_fs');
+    if (saved) setFiles(JSON.parse(saved));
+  }, []);
+
+  if (!mounted) return null;
 
   const saveFile = () => {
     const newFiles = { ...files, [filename]: content };

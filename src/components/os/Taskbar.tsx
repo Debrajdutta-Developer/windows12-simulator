@@ -29,9 +29,10 @@ const APP_ICONS: Record<AppID, React.ReactNode> = {
 
 export const Taskbar = () => {
   const { windows, activeWindowId, openApp, focusApp, minimizeApp } = useOSStore();
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState<Date | null>(null);
 
   useEffect(() => {
+    setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -106,10 +107,14 @@ export const Taskbar = () => {
       </div>
 
       <div className="flex-1 flex items-center justify-end gap-2 px-2 text-xs font-medium text-black/70">
-        <div className="flex flex-col items-end leading-tight select-none" suppressHydrationWarning>
-          <span>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-          <span>{time.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' })}</span>
-        </div>
+        {time ? (
+          <div className="flex flex-col items-end leading-tight select-none">
+            <span>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>{time.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' })}</span>
+          </div>
+        ) : (
+          <div className="w-16 h-8 animate-pulse bg-gray-200/50 rounded-md" />
+        )}
       </div>
     </div>
   );
