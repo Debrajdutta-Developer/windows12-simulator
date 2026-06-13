@@ -5,7 +5,6 @@ import { useOSStore } from '@/store/useOSStore';
 import { AppID } from '@/types/os';
 import { cn } from '@/lib/utils';
 import { 
-  LayoutGrid, 
   FileText, 
   Palette, 
   Globe, 
@@ -13,22 +12,25 @@ import {
   Calculator, 
   Folder, 
   Music, 
-  ShoppingBag 
+  ShoppingBag,
+  Terminal,
+  Settings
 } from 'lucide-react';
 
 const APP_ICONS: Record<AppID, React.ReactNode> = {
-  notepad: <FileText size={20} />,
-  paint: <Palette size={20} />,
-  browser: <Globe size={20} />,
-  copilot: <MessageSquare size={20} />,
-  calculator: <Calculator size={20} />,
-  explorer: <Folder size={20} />,
-  music: <Music size={20} />,
-  store: <ShoppingBag size={20} />
+  notepad: <FileText size={20} className="text-blue-500" />,
+  paint: <Palette size={20} className="text-pink-500" />,
+  browser: <Globe size={20} className="text-blue-400" />,
+  copilot: <MessageSquare size={20} className="text-purple-500" />,
+  calculator: <Calculator size={20} className="text-gray-600" />,
+  explorer: <Folder size={20} className="text-yellow-500" />,
+  music: <Music size={20} className="text-red-500" />,
+  store: <ShoppingBag size={20} className="text-green-500" />,
+  terminal: <Terminal size={20} className="text-gray-800" />,
+  settings: <Settings size={20} className="text-gray-600" />
 };
 
-export const Taskbar = () => {
-  const { windows, activeWindowId, openApp, focusApp, minimizeApp } = useOSStore();
+const Clock = () => {
   const [time, setTime] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -36,6 +38,19 @@ export const Taskbar = () => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  if (!time) return <div className="w-16 h-8 bg-black/5 animate-pulse rounded-md" />;
+
+  return (
+    <div className="flex flex-col items-end leading-tight select-none">
+      <span>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      <span>{time.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' })}</span>
+    </div>
+  );
+};
+
+export const Taskbar = () => {
+  const { windows, activeWindowId, openApp, focusApp, minimizeApp } = useOSStore();
 
   const handleAppClick = (id: AppID, title: string) => {
     const window = windows.find(w => w.id === id);
@@ -57,13 +72,19 @@ export const Taskbar = () => {
 
   return (
     <div className="h-12 w-full fixed bottom-0 left-0 right-0 z-[9999] flex items-center justify-between px-2 bg-white/70 backdrop-blur-2xl border-t border-white/20">
-      <div className="flex-1" />
+      <div className="flex-1 flex items-center">
+        {/* Start Button */}
+        <button className="p-2 hover:bg-white/40 rounded-md transition-all active:scale-95 group">
+           <div className="grid grid-cols-2 gap-0.5 w-5 h-5 group-hover:rotate-12 transition-transform">
+            <div className="bg-blue-400 rounded-sm"></div>
+            <div className="bg-blue-500 rounded-sm"></div>
+            <div className="bg-blue-500 rounded-sm"></div>
+            <div className="bg-blue-600 rounded-sm"></div>
+          </div>
+        </button>
+      </div>
 
       <div className="flex items-center gap-1 bg-white/20 p-1 rounded-xl">
-        <button className="p-2 hover:bg-white/40 rounded-md transition-all active:scale-95 group">
-          <LayoutGrid size={24} className="text-blue-500" />
-        </button>
-
         {pinnedApps.map(app => {
           const isOpen = windows.some(w => w.id === app.id);
           const isActive = activeWindowId === app.id;
@@ -77,10 +98,12 @@ export const Taskbar = () => {
                 isActive ? "bg-white/50 shadow-sm" : "hover:bg-white/40"
               )}
             >
-              {APP_ICONS[app.id]}
+              <div className="transition-transform group-hover:-translate-y-1">
+                {APP_ICONS[app.id]}
+              </div>
               {isOpen && (
                 <div className={cn(
-                  "absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1 rounded-full bg-blue-500",
+                  "absolute bottom-0.5 left-1/2 -translate-x-1/2 h-1 rounded-full bg-blue-500 transition-all",
                   isActive ? "w-4" : "w-1.5"
                 )} />
               )}
@@ -97,24 +120,19 @@ export const Taskbar = () => {
               activeWindowId === w.id ? "bg-white/50 shadow-sm" : "hover:bg-white/40"
             )}
           >
-            {APP_ICONS[w.id]}
+            <div className="transition-transform group-hover:-translate-y-1">
+              {APP_ICONS[w.id]}
+            </div>
             <div className={cn(
-              "absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1 rounded-full bg-blue-500",
+              "absolute bottom-0.5 left-1/2 -translate-x-1/2 h-1 rounded-full bg-blue-500 transition-all",
               activeWindowId === w.id ? "w-4" : "w-1.5"
             )} />
           </button>
         ))}
       </div>
 
-      <div className="flex-1 flex items-center justify-end gap-2 px-2 text-xs font-medium text-black/70">
-        {time ? (
-          <div className="flex flex-col items-end leading-tight select-none">
-            <span>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-            <span>{time.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' })}</span>
-          </div>
-        ) : (
-          <div className="w-16 h-8 animate-pulse bg-gray-200/50 rounded-md" />
-        )}
+      <div className="flex-1 flex items-center justify-end gap-2 px-2 text-[11px] font-medium text-black/70">
+        <Clock />
       </div>
     </div>
   );
