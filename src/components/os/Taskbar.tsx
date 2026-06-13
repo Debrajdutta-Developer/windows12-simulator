@@ -49,20 +49,20 @@ export const Taskbar = () => {
 
   const pinnedApps: { id: AppID; title: string }[] = [
     { id: 'explorer', title: 'File Explorer' },
-    { id: 'browser', title: 'Browser' },
-    { id: 'copilot', title: 'AI Copilot' },
-    { id: 'store', title: 'App Store' },
+    { id: 'browser', title: 'Edge' },
+    { id: 'copilot', title: 'Copilot' },
+    { id: 'store', title: 'Microsoft Store' },
   ];
 
   return (
-    <div className="h-12 w-full fixed bottom-0 left-0 right-0 z-[9999] flex items-center justify-between px-2 bg-white/60 backdrop-blur-xl border-t border-white/20">
-      <div className="flex-1 flex items-center gap-1">
-        <button className="p-2 hover:bg-white/40 rounded-md transition-all active:scale-95 group">
-          <LayoutGrid size={24} className="text-blue-600 group-hover:rotate-12 transition-transform" />
-        </button>
-      </div>
+    <div className="h-12 w-full fixed bottom-0 left-0 right-0 z-[9999] flex items-center justify-between px-2 bg-white/70 backdrop-blur-2xl border-t border-white/20">
+      <div className="flex-1" />
 
-      <div className="flex items-center gap-1 bg-white/30 p-1 rounded-xl border border-white/20">
+      <div className="flex items-center gap-1 bg-white/20 p-1 rounded-xl">
+        <button className="p-2 hover:bg-white/40 rounded-md transition-all active:scale-95 group">
+          <LayoutGrid size={24} className="text-blue-500" />
+        </button>
+
         {pinnedApps.map(app => {
           const isOpen = windows.some(w => w.id === app.id);
           const isActive = activeWindowId === app.id;
@@ -83,15 +83,10 @@ export const Taskbar = () => {
                   isActive ? "w-4" : "w-1.5"
                 )} />
               )}
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                {app.title}
-              </div>
             </button>
           );
         })}
         
-        {/* Open but not pinned apps */}
         {windows.filter(w => !pinnedApps.some(p => p.id === w.id)).map(w => (
           <button
             key={w.id}
@@ -111,7 +106,7 @@ export const Taskbar = () => {
       </div>
 
       <div className="flex-1 flex items-center justify-end gap-2 px-2 text-xs font-medium text-black/70">
-        <div className="flex flex-col items-end leading-tight">
+        <div className="flex flex-col items-end leading-tight select-none" suppressHydrationWarning>
           <span>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           <span>{time.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' })}</span>
         </div>

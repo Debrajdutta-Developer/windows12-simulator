@@ -6,7 +6,9 @@ export type AppID =
   | 'calculator' 
   | 'explorer' 
   | 'music' 
-  | 'store';
+  | 'store'
+  | 'terminal'
+  | 'settings';
 
 export interface WindowState {
   id: AppID;

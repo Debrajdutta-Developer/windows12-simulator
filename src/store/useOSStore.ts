@@ -18,7 +18,7 @@ interface OSState {
 export const useOSStore = create<OSState>((set, get) => ({
   windows: [],
   activeWindowId: null,
-  installedApps: ['notepad', 'paint', 'browser', 'copilot', 'calculator', 'explorer', 'music', 'store'], // Initially all for now
+  installedApps: ['notepad', 'paint', 'browser', 'copilot', 'calculator', 'explorer', 'music', 'store', 'terminal', 'settings'], // Initially all for now
 
   openApp: (id, title) => {
     const { windows } = get();

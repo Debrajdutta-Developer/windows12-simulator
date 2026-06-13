@@ -36,7 +36,7 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
         position: 'absolute',
       }}
       className={cn(
-        "flex flex-col overflow-hidden bg-white/80 backdrop-blur-md rounded-lg shadow-2xl border border-white/20",
+        "flex flex-col overflow-hidden bg-white/80 backdrop-blur-3xl rounded-xl shadow-2xl border border-white/40",
         isMaximized ? "inset-0 rounded-none" : "w-[800px] h-[500px] left-[10%] top-[10%]",
         !isFocused && "brightness-95 shadow-lg"
       )}
