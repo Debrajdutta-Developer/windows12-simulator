@@ -24,51 +24,54 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
   const isFocused = windowState.focused;
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Only focus if not already focused to avoid redundant store updates during interaction
-    if (!isFocused) {
-      focusApp(id);
-    }
-    
-    // Attempt to set pointer capture to handle drags more robustly
+    focusApp(id);
     try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
     } catch (err) {
-      // Ignore if pointer capture fails (unsupported in some environments)
+      // Ignore capture errors on unsupported environments
     }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
     try {
-      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     } catch (err) {
-      // Ignore
+      // Ignore release errors
     }
   };
 
   return (
     <motion.div
       initial={{ scale: 0.95, opacity: 0, y: 20 }}
-      animate={{ scale: 1, opacity: 1, y: 0 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1, 
+        y: 0,
+        boxShadow: isFocused 
+          ? "0 25px 50px -12px rgba(0, 0, 0, 0.5)" 
+          : "0 10px 15px -3px rgba(0, 0, 0, 0.2)"
+      }}
       exit={{ scale: 0.95, opacity: 0, y: 20 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      transition={{ type: "spring", damping: 25, stiffness: 300 }}
       drag={!isMaximized}
       dragMomentum={false}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
+      onDragStart={() => focusApp(id)}
       style={{ 
         zIndex: windowState.zIndex,
         position: 'absolute',
-        touchAction: 'none' // Important for mobile and pointer capture
+        touchAction: 'none'
       }}
       className={cn(
-        "flex flex-col overflow-hidden bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/40",
-        isMaximized ? "inset-0 rounded-none" : "w-[800px] h-[550px] left-[15%] top-[10%]",
-        !isFocused && "brightness-95 shadow-lg opacity-90"
+        "flex flex-col overflow-hidden bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl rounded-xl border border-white/30 transition-shadow duration-200",
+        isMaximized ? "inset-0 rounded-none" : "w-[850px] h-[550px] left-[15%] top-[10%]",
+        !isFocused && "brightness-90 opacity-95 shadow-lg"
       )}
     >
       {/* Title Bar */}
       <div 
-        className="flex items-center justify-between px-3 py-2 bg-white/40 border-b border-black/5 select-none"
+        className="flex items-center justify-between px-3 py-2 bg-white/20 border-b border-black/5 select-none"
         onDoubleClick={() => maximizeApp(id)}
       >
         <div className="flex items-center gap-2 text-sm font-medium text-black/70">
@@ -98,9 +101,10 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
         </div>
       </div>
 
-      {/* Content */}
-      <div className={cn("flex-1 overflow-auto relative", !isFocused && "pointer-events-none")}>
-        {children}
+      {/* Content Overlay to prevent iframe theft of pointer */}
+      <div className="flex-1 overflow-auto relative">
+         {/* Invisible overlay while dragging to ensure smooth movement over iframes */}
+         <div className="absolute inset-0 z-0">{children}</div>
       </div>
     </motion.div>
   );

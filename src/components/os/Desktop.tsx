@@ -89,21 +89,23 @@ export const Desktop = () => {
   );
 };
 
-const DesktopIcon = ({ name, icon, onDoubleClick }: { id: string, name: string, icon: React.ReactNode, onDoubleClick: () => void }) => {
+const DesktopIcon = ({ id, name, icon, onDoubleClick }: { id: string, name: string, icon: React.ReactNode, onDoubleClick: () => void }) => {
   const lastClickTime = React.useRef(0);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent | React.PointerEvent) => {
+    // Prevent double execution on touch devices
     const now = Date.now();
-    // Support single click for touch devices or double click for desktop
-    if (now - lastClickTime.current < 300 || (typeof window !== 'undefined' && 'ontouchstart' in window)) {
+    if (now - lastClickTime.current < 400 || ('ontouchstart' in window)) {
       onDoubleClick();
+      lastClickTime.current = 0; // Reset
+    } else {
+      lastClickTime.current = now;
     }
-    lastClickTime.current = now;
   };
 
   return (
     <button 
-      onClick={handleClick}
+      onPointerDown={handleClick}
       className="flex flex-col items-center gap-1 p-2 rounded-md hover:bg-white/10 active:bg-white/20 transition-all w-24 group outline-none"
     >
       <div className="group-active:scale-95 transition-transform duration-75">
