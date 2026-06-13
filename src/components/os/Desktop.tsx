@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { useOSStore } from '@/store/useOSStore';
 import { Taskbar } from './Taskbar';
 import { Window } from './Window';
@@ -90,23 +90,20 @@ export const Desktop = () => {
 };
 
 const DesktopIcon = ({ name, icon, onDoubleClick }: { id: string, name: string, icon: React.ReactNode, onDoubleClick: () => void }) => {
-  const lastClickTime = useRef(0);
+  const lastClickTime = React.useRef(0);
 
-  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleClick = () => {
     const now = Date.now();
-    // Support both double click and mobile single tap (if fast enough or explicit touch)
-    if (now - lastClickTime.current < 300 || e.type === 'touchstart') {
+    // Support single click for touch devices or double click for desktop
+    if (now - lastClickTime.current < 300 || (typeof window !== 'undefined' && 'ontouchstart' in window)) {
       onDoubleClick();
-      lastClickTime.current = 0; // Reset
-    } else {
-      lastClickTime.current = now;
     }
+    lastClickTime.current = now;
   };
 
   return (
     <button 
       onClick={handleClick}
-      onTouchStart={handleClick}
       className="flex flex-col items-center gap-1 p-2 rounded-md hover:bg-white/10 active:bg-white/20 transition-all w-24 group outline-none"
     >
       <div className="group-active:scale-95 transition-transform duration-75">

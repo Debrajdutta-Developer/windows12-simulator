@@ -23,11 +23,12 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
   const isMaximized = windowState.isMaximized;
   const isFocused = windowState.focused;
 
-  // Use Pointer Events for better dragging stability and to avoid releasePointerCapture errors
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Only focus if not already focused to minimize re-renders during interaction
-    if (!isFocused) {
-      focusApp(id);
+    focusApp(id);
+    try {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } catch (err) {
+      // Ignore if pointer capture fails
     }
   };
 
@@ -38,12 +39,12 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
       exit={{ scale: 0.9, opacity: 0 }}
       drag={!isMaximized}
       dragMomentum={false}
-      onDragStart={() => !isFocused && focusApp(id)}
+      onDragStart={() => focusApp(id)}
       onPointerDown={handlePointerDown}
       style={{ 
         zIndex: windowState.zIndex,
         position: 'absolute',
-        touchAction: 'none' // Crucial for preventing browser interference with dragging
+        touchAction: 'none'
       }}
       className={cn(
         "flex flex-col overflow-hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl rounded-xl shadow-2xl border border-white/40",
@@ -53,7 +54,7 @@ export const Window: React.FC<WindowProps> = ({ id, title, children, icon }) => 
     >
       {/* Title Bar */}
       <div 
-        className="flex items-center justify-between px-3 py-2 bg-white/40 border-b border-black/5 select-none"
+        className="flex items-center justify-between px-3 py-2 bg-white/40 border-b border-black/5 select-none touch-none"
         onDoubleClick={() => maximizeApp(id)}
       >
         <div className="flex items-center gap-2 text-sm font-medium text-black/70">

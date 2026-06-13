@@ -12,9 +12,7 @@ import {
   Calculator, 
   Folder, 
   Music, 
-  ShoppingBag,
-  Terminal,
-  Settings
+  ShoppingBag 
 } from 'lucide-react';
 
 const APP_ICONS: Record<AppID, React.ReactNode> = {
@@ -26,25 +24,26 @@ const APP_ICONS: Record<AppID, React.ReactNode> = {
   explorer: <Folder size={20} className="text-yellow-500" />,
   music: <Music size={20} className="text-red-500" />,
   store: <ShoppingBag size={20} className="text-green-500" />,
-  terminal: <Terminal size={20} className="text-gray-800" />,
-  settings: <Settings size={20} className="text-gray-600" />
+  terminal: <div className="w-5 h-5 bg-gray-800 rounded flex items-center justify-center text-[10px] text-white font-mono">{">_"}</div>,
+  settings: <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 text-[10px]">⚙️</div>
 };
 
 const Clock = () => {
-  const [time, setTime] = useState<Date | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    setTime(new Date());
+    setMounted(true);
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  if (!time) return <div className="w-16 h-8 bg-black/5 animate-pulse rounded-md" />;
+  if (!mounted) return <div className="w-16 h-8" />;
 
   return (
-    <div className="flex flex-col items-end leading-tight select-none">
-      <span>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-      <span>{time.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' })}</span>
+    <div className="flex flex-col items-end leading-tight select-none text-right">
+      <span className="text-[11px] font-medium">{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      <span className="text-[11px] font-medium">{time.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' })}</span>
     </div>
   );
 };
@@ -72,19 +71,18 @@ export const Taskbar = () => {
 
   return (
     <div className="h-12 w-full fixed bottom-0 left-0 right-0 z-[9999] flex items-center justify-between px-2 bg-white/70 backdrop-blur-2xl border-t border-white/20">
-      <div className="flex-1 flex items-center">
-        {/* Start Button */}
+      <div className="flex-1" />
+
+      <div className="flex items-center gap-1 bg-white/20 p-1 rounded-xl">
         <button className="p-2 hover:bg-white/40 rounded-md transition-all active:scale-95 group">
-           <div className="grid grid-cols-2 gap-0.5 w-5 h-5 group-hover:rotate-12 transition-transform">
+          <div className="grid grid-cols-2 gap-0.5 w-5 h-5 group-hover:rotate-12 transition-transform">
             <div className="bg-blue-400 rounded-sm"></div>
             <div className="bg-blue-500 rounded-sm"></div>
             <div className="bg-blue-500 rounded-sm"></div>
             <div className="bg-blue-600 rounded-sm"></div>
           </div>
         </button>
-      </div>
 
-      <div className="flex items-center gap-1 bg-white/20 p-1 rounded-xl">
         {pinnedApps.map(app => {
           const isOpen = windows.some(w => w.id === app.id);
           const isActive = activeWindowId === app.id;
@@ -103,7 +101,7 @@ export const Taskbar = () => {
               </div>
               {isOpen && (
                 <div className={cn(
-                  "absolute bottom-0.5 left-1/2 -translate-x-1/2 h-1 rounded-full bg-blue-500 transition-all",
+                  "absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1 rounded-full bg-blue-500 transition-all",
                   isActive ? "w-4" : "w-1.5"
                 )} />
               )}
@@ -131,7 +129,7 @@ export const Taskbar = () => {
         ))}
       </div>
 
-      <div className="flex-1 flex items-center justify-end gap-2 px-2 text-[11px] font-medium text-black/70">
+      <div className="flex-1 flex items-center justify-end gap-2 px-2 text-xs font-medium text-black/70">
         <Clock />
       </div>
     </div>
