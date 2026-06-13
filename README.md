@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Windows 12 Simulator
 
-## Getting Started
+A high-fidelity, functional web-based simulation of a futuristic "Windows 12" built with Next.js 15, React 19, Tailwind CSS, and Framer Motion.
 
-First, run the development server:
+![Windows 12 Simulator](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌟 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🖥️ Core OS Experience
+- **Modern UI**: Sleek glassmorphic design with rounded corners and subtle shadows.
+- **Window Manager**: Fully draggable, resizable, minimizable, and maximizable windows.
+- **Taskbar & Start Menu**: Centralized taskbar with app pinning and active window indicators.
+- **System Clock**: Real-time clock and date display.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 📦 Integrated Applications
+- **🤖 Copilot (AI Assistant)**: A built-in AI chat interface to assist with tasks.
+- **🌐 Web Browser**: Browse the web with a custom address bar and search interface.
+- **📝 Notepad**: Fully functional text editor with the ability to save and open files (stored in `localStorage`).
+- **🎨 Paint**: HTML5 Canvas-based drawing app with color and brush size controls.
+- **🧮 Calculator**: Working calculator for standard mathematical operations.
+- **📂 File Explorer**: Navigate a mock virtual filesystem and manage your saved documents.
+- **🎵 Music Player**: Interactive UI for playing audio tracks with playlist support.
+- **🛍️ Microsoft Store**: Browse, install, and uninstall applications dynamically.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Getting Started
 
-## Learn More
+### Prerequisites
+- Node.js 18.x or later
+- npm or pnpm
 
-To learn more about Next.js, take a look at the following resources:
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/windows12-simulator.git
+   cd windows12-simulator
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to experience Windows 12.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ Tech Stack
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📂 Project Structure
+- `src/components/os/`: Core desktop and windowing logic.
+- `src/components/apps/`: Individual application implementations.
+- `src/store/`: Global OS state management.
+- `src/types/`: TypeScript definitions for the OS ecosystem.
+
+## 📝 License
+This project is licensed under the MIT License.
